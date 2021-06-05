@@ -36,13 +36,15 @@ class GoogleDriveStorage extends FileSystemStorage {
   }
 
   Future<void> _uploadGoogleDrive() async {
-    // FIXME: To be implemented!
-
     var driveFile = drive.File();
     driveFile.name = _drivePath;
 
     var fileToUpload = File(_localPath);
 
+    // *********************************
+    // FIXME: Update file if exists yet!!!
+    // *********************************
+    
     // Create a new back-up file on google drive.
     await _driveApi.files.create(driveFile, uploadMedia: drive.Media(fileToUpload.openRead(), fileToUpload.lengthSync()));
   }
