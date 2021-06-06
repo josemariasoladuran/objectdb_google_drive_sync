@@ -20,6 +20,11 @@ class GoogleDriveStorage extends FileSystemStorage {
 
   @override
   Future<Meta> open([int version = 1]) async {
+    var responseQuery = await _driveApi.files.list(q: "name='$_drivePath' and trashed = false");
+    if (responseQuery.files.isNotEmpty) {
+      _driveFileId = responseQuery.files[0].id;
+      // FIXME: Download file if exists in remote Google Drive Storage
+    }
     return super.open();
   }
 
@@ -52,12 +57,6 @@ class GoogleDriveStorage extends FileSystemStorage {
     var fileToUpload = File(_localPath);
     var uploadMedia =
         drive.Media(fileToUpload.openRead(), fileToUpload.lengthSync());
-    if (_driveFileId == null) {
-      var responseQuery = await _driveApi.files.list(q: "name='$_drivePath' and trashed = false");
-      if (responseQuery.files.isNotEmpty) {
-        _driveFileId = responseQuery.files[0].id;
-      }
-    }
     if (_driveFileId != null) {
       await _driveApi.files
           .update(driveFile, _driveFileId, uploadMedia: uploadMedia);
@@ -66,6 +65,5 @@ class GoogleDriveStorage extends FileSystemStorage {
           await _driveApi.files.create(driveFile, uploadMedia: uploadMedia);
       _driveFileId = result.id;
     }
-    // ;
   }
 }

@@ -1,21 +1,20 @@
 @Timeout(Duration(seconds: 5000))
 
 import 'dart:io';
-
+import 'package:dotenv/dotenv.dart' show load, env;
 import 'package:objectdb/objectdb.dart';
 import 'package:objectdb_google_drive_sync/objectdb_google_drive.dart';
 import 'package:test/test.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 
-const GOOGLE_TEST_APP_CLIENT_ID =
-    '707287005811-1b4cl8jpck8ickkpsfgj1039p0hu2umu.apps.googleusercontent.com';
-const GOOGLE_TEST_APP_CLIENT_SECRET = 'zVt3fgosxHwLdScpblWURxX2';
-
 void main() {
   test('Synchronize database in Google Drive', () async {
+    //Load environment var .env file
+    load();
+
     var googleAuthClient = await clientViaUserConsent(
-        ClientId(GOOGLE_TEST_APP_CLIENT_ID, GOOGLE_TEST_APP_CLIENT_SECRET),
+        ClientId(env['GOOGLE_TEST_APP_CLIENT_ID'], env['GOOGLE_TEST_APP_CLIENT_SECRET']),
         [drive.DriveApi.driveScope], (url) {
       print('Please go to the following URL and grant access:');
       print('  => $url"');
