@@ -1,0 +1,12 @@
+{"name":{"first":"Jose Maria","last":"Sola Duran"},"age":28,"active":true,"_id":"60bcaa0f8876532dfb86ba4f"}
+{"name":{"first":"Francisco","last":"Fernandez Jimenez"},"age":18,"active":false,"_id":"60bcaa118876532dfb86ba50"}
+~{"q":{"Op.gte":{"age":80}},"c":{"active":false},"r":false}
+-{"active":false}
+{"name":{"first":"Jose Maria","last":"Sola Duran"},"age":28,"active":true,"_id":"60bcaa55db363d5c391e953b"}
+{"name":{"first":"Francisco","last":"Fernandez Jimenez"},"age":18,"active":false,"_id":"60bcaa56db363d5c391e953c"}
+~{"q":{"Op.gte":{"age":80}},"c":{"active":false},"r":false}
+-{"active":false}
+{"name":{"first":"Jose Maria","last":"Sola Duran"},"age":28,"active":true,"_id":"60bcaedba7fc73ca82ce4f4d"}
+{"name":{"first":"Francisco","last":"Fernandez Jimenez"},"age":18,"active":false,"_id":"60bcaedda7fc73ca82ce4f4e"}
+~{"q":{"Op.gte":{"age":80}},"c":{"active":false},"r":false}
+-{"active":false}

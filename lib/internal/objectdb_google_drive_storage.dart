@@ -11,11 +11,13 @@ class GoogleDriveStorage extends FileSystemStorage {
   final String _drivePath;
   final drive.DriveApi _driveApi;
 
+  File _localFile;
   String _driveFileId;
 
   GoogleDriveStorage(
       this._localPath, this._drivePath, http.Client googleAuthClient)
       : _driveApi = drive.DriveApi(googleAuthClient),
+        _localFile = File(_localPath),
         super(_localPath);
 
   @override
@@ -23,7 +25,9 @@ class GoogleDriveStorage extends FileSystemStorage {
     var responseQuery = await _driveApi.files.list(q: "name='$_drivePath' and trashed = false");
     if (responseQuery.files.isNotEmpty) {
       _driveFileId = responseQuery.files[0].id;
+      var driveFileContentStream = await _driveApi.files.get(_driveFileId, downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
       // FIXME: Download file if exists in remote Google Drive Storage
+      // driveFileContentStream.stream      
     }
     return super.open();
   }
@@ -54,9 +58,9 @@ class GoogleDriveStorage extends FileSystemStorage {
     driveFile.name = _drivePath;
 
     // Create a new back-up file on google drive.
-    var fileToUpload = File(_localPath);
+    var localFile = File(_localPath);
     var uploadMedia =
-        drive.Media(fileToUpload.openRead(), fileToUpload.lengthSync());
+        drive.Media(localFile.openRead(), localFile.lengthSync());
     if (_driveFileId != null) {
       await _driveApi.files
           .update(driveFile, _driveFileId, uploadMedia: uploadMedia);
