@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:objectdb/objectdb.dart';
+import 'package:objectdb/src/objectdb_meta.dart';
 import 'package:objectdb/src/objectdb_storage_filesystem.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
+
 class GoogleDriveStorage extends FileSystemStorage {
   final String _localPath;
   final String _drivePath;
@@ -13,6 +15,11 @@ class GoogleDriveStorage extends FileSystemStorage {
       this._localPath, this._drivePath, http.Client googleAuthClient)
       : _driveApi = drive.DriveApi(googleAuthClient),
         super(_localPath);
+
+  @override
+  Future<Meta> open([int version = 1]) async {
+    return super.open();
+  }
 
   @override
   Future<ObjectId> insert(Map data) async {

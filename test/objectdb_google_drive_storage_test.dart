@@ -3,7 +3,8 @@
 import 'dart:io';
 
 import 'package:objectdb/objectdb.dart';
-import 'package:objectdb_google_drive_sync/objectdb_google_drive_storage.dart';
+import 'package:objectdb_google_drive_sync/internal/objectdb_google_drive_storage.dart';
+import 'package:objectdb_google_drive_sync/objectdb_google_drive.dart';
 import 'package:test/test.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
@@ -21,7 +22,7 @@ void main() {
       });
 
     final localPath = Directory.current.path + '/test.objectdb';
-    final db = ObjectDB(GoogleDriveStorage(localPath, 'test.objectdb', googleAuthClient));
+    final db = GoogleDriveObjectDB(localPath, 'test.objectdb', googleAuthClient);
     
     // insert document into database
     await db.insert({'name': {'first': 'Some', 'last': 'Body'}, 'age': 18, 'active': true});
