@@ -10,13 +10,15 @@ class GoogleDriveStorage extends FileSystemStorage {
   final File _localFile;
   final String _drivePath;
   final drive.DriveApi _driveApi;
+  final bool _encrypt;
 
   String _driveFileId;
 
   GoogleDriveStorage(
-      String _localPath, this._drivePath, http.Client googleAuthClient)
+      String _localPath, this._drivePath, http.Client googleAuthClient, { bool encrypt = false })
       : _driveApi = drive.DriveApi(googleAuthClient),
         _localFile = File(_localPath),
+        _encrypt = encrypt,
         super(_localPath);
 
   @override
@@ -30,6 +32,9 @@ class GoogleDriveStorage extends FileSystemStorage {
       }
       await for (var value in driveFileContentStream.stream) {
         await _localFile.writeAsBytes(value, mode: FileMode.append, flush: true);
+      }
+      if (_encrypt) {
+        // FIXME: Decrypt data after download!
       }
     }
     return super.open();
@@ -66,6 +71,9 @@ class GoogleDriveStorage extends FileSystemStorage {
     var driveFile = drive.File();
     driveFile.name = _drivePath;
 
+    if (_encrypt) {
+      // FIXME: Decrypt data before upload!
+    }
     // Create a new back-up file on google drive.
     var uploadMedia =
         drive.Media(_localFile.openRead(), await _localFile.length());
