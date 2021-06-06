@@ -3,39 +3,53 @@
 import 'dart:io';
 
 import 'package:objectdb/objectdb.dart';
-import 'package:objectdb_google_drive_sync/internal/objectdb_google_drive_storage.dart';
 import 'package:objectdb_google_drive_sync/objectdb_google_drive.dart';
 import 'package:test/test.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 
+const GOOGLE_TEST_APP_CLIENT_ID =
+    '707287005811-1b4cl8jpck8ickkpsfgj1039p0hu2umu.apps.googleusercontent.com';
+const GOOGLE_TEST_APP_CLIENT_SECRET = 'zVt3fgosxHwLdScpblWURxX2';
+
 void main() {
   test('Synchronize database in Google Drive', () async {
-
-    var id = ClientId('707287005811-1b4cl8jpck8ickkpsfgj1039p0hu2umu.apps.googleusercontent.com', 'zVt3fgosxHwLdScpblWURxX2');
-    var scopes = [drive.DriveApi.driveScope];
-  
-    var googleAuthClient = await clientViaUserConsent(id, scopes, (url) {
-        print('Please go to the following URL and grant access:');
-        print('  => $url"');
-        print('');
-      });
+    var googleAuthClient = await clientViaUserConsent(
+        ClientId(GOOGLE_TEST_APP_CLIENT_ID, GOOGLE_TEST_APP_CLIENT_SECRET),
+        [drive.DriveApi.driveScope], (url) {
+      print('Please go to the following URL and grant access:');
+      print('  => $url"');
+      print('');
+    });
 
     final localPath = Directory.current.path + '/test.objectdb';
-    final db = GoogleDriveObjectDB(localPath, 'test.objectdb', googleAuthClient);
-    
+    final db =
+        GoogleDriveObjectDB(localPath, 'test.objectdb', googleAuthClient);
+
     // insert document into database
-    await db.insert({'name': {'first': 'Some', 'last': 'Body'}, 'age': 18, 'active': true});
-    await db.insert({'name': {'first': 'Someone', 'last': 'Else'}, 'age': 25, 'active': false});
+    await db.insert({
+      'name': {'first': 'Jose Maria', 'last': 'Sola Duran'},
+      'age': 28,
+      'active': true
+    });
+    await db.insert({
+      'name': {'first': 'Francisco', 'last': 'Fernandez Jimenez'},
+      'age': 18,
+      'active': false
+    });
 
     // update documents
-    await db.update({Op.gte: {'age': 80}}, {'active': false});
+    await db.update({
+      Op.gte: {'age': 80}
+    }, {
+      'active': false
+    });
 
     // remove documents
     await db.remove({'active': false});
 
     // search documents in database
-    var result = await db.find({'active': true, 'name.first': 'Some'});
+    var result = await db.find({'active': true, 'name.first': 'Jose Maria'});
 
     expect(result.isNotEmpty, equals(true));
     // cleanup the db file
@@ -43,5 +57,5 @@ void main() {
 
     // close db
     await db.close();
-});
+  });
 }
